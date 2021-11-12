@@ -30,17 +30,119 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  Widget backgroundView = Container(
-    decoration: BoxDecoration(
-      color: HexColor("#072965"),
-      image: DecorationImage(
-        image: const AssetImage("assets/images/bg.png"),
-        fit: BoxFit.cover,
-        colorFilter:
-            ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.lighten),
+  Widget backgroundView() {
+    return Container(
+      decoration: BoxDecoration(
+        color: HexColor("#072965"),
+        image: DecorationImage(
+          image: const AssetImage("assets/images/bg.png"),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.2), BlendMode.lighten),
+        ),
       ),
-    ),
-  );
+    );
+  }
+
+  Widget titleView() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+      child: Text(
+        date_util.DateUtils.months[currentDateTime.month - 1] +
+            ' ' +
+            currentDateTime.year.toString(),
+        style: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+      ),
+    );
+  }
+
+  Widget hrizontalCapsuleListView() {
+    return Container(
+      width: width,
+      height: 150,
+      child: ListView.builder(
+        controller: scrollController,
+        scrollDirection: Axis.horizontal,
+        physics: const ClampingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: currentMonthList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return capsuleView(index);
+        },
+      ),
+    );
+  }
+
+  Widget capsuleView(int index) {
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              currentDateTime = currentMonthList[index];
+            });
+          },
+          child: Container(
+            width: 80,
+            height: 140,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: (currentMonthList[index].day != currentDateTime.day)
+                        ? [
+                            Colors.white.withOpacity(0.8),
+                            Colors.white.withOpacity(0.7),
+                            Colors.white.withOpacity(0.6)
+                          ]
+                        : [
+                            HexColor("ED6184"),
+                            HexColor("EF315B"),
+                            HexColor("E2042D")
+                          ],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                    stops: const [0.0, 0.5, 1.0],
+                    tileMode: TileMode.clamp),
+                borderRadius: BorderRadius.circular(40),
+                boxShadow: const [
+                  BoxShadow(
+                    offset: Offset(4, 4),
+                    blurRadius: 4,
+                    spreadRadius: 2,
+                    color: Colors.black12,
+                  )
+                ]),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    currentMonthList[index].day.toString(),
+                    style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            (currentMonthList[index].day != currentDateTime.day)
+                                ? HexColor("465876")
+                                : Colors.white),
+                  ),
+                  Text(
+                    date_util.DateUtils
+                        .weekdays[currentMonthList[index].weekday - 1],
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            (currentMonthList[index].day != currentDateTime.day)
+                                ? HexColor("465876")
+                                : Colors.white),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ));
+  }
 
   Widget topView() {
     return Container(
@@ -72,100 +174,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-              child: Text(
-                date_util.DateUtils.months[currentDateTime.month - 1] +
-                    ' ' +
-                    currentDateTime.year.toString(),
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              ),
-            ),
-            Container(
-              width: width,
-              height: 150,
-              child: ListView.builder(
-                controller: scrollController,
-                scrollDirection: Axis.horizontal,
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: currentMonthList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          currentDateTime = currentMonthList[index];
-                        });
-                      },
-                      child: Container(
-                        width: 80,
-                        height: 140,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: (currentMonthList[index].day !=
-                                        currentDateTime.day)
-                                    ? [
-                                        Colors.white.withOpacity(0.8),
-                                        Colors.white.withOpacity(0.7),
-                                        Colors.white.withOpacity(0.6)
-                                      ]
-                                    : [
-                                        HexColor("ED6184"),
-                                        HexColor("EF315B"),
-                                        HexColor("E2042D")
-                                      ],
-                                begin: const FractionalOffset(0.0, 0.0),
-                                end: const FractionalOffset(0.0, 1.0),
-                                stops: const [0.0, 0.5, 1.0],
-                                tileMode: TileMode.clamp),
-                            borderRadius: BorderRadius.circular(40),
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(4, 4),
-                                blurRadius: 4,
-                                spreadRadius: 2,
-                                color: Colors.black12,
-                              )
-                            ]),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                currentMonthList[index].day.toString(),
-                                style: TextStyle(
-                                    fontSize: 48,
-                                    fontWeight: FontWeight.bold,
-                                    color: (currentMonthList[index].day !=
-                                            currentDateTime.day)
-                                        ? HexColor("465876")
-                                        : Colors.white),
-                              ),
-                              Text(
-                                date_util.DateUtils.weekdays[
-                                    currentMonthList[index].weekday - 1],
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: (currentMonthList[index].day !=
-                                            currentDateTime.day)
-                                        ? HexColor("465876")
-                                        : Colors.white),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            titleView(),
+            hrizontalCapsuleListView(),
           ]),
     );
   }
@@ -200,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
               context: context,
               builder: (BuildContext context) {
                 return Dialog(
-                  backgroundColor: Colors.black54,
+                  backgroundColor: Colors.black87,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                   child: Container(
@@ -299,7 +309,11 @@ class _MyHomePageState extends State<MyHomePage> {
     height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Stack(
-          children: <Widget>[backgroundView, topView(), todoList()],
+          children: <Widget>[
+            backgroundView(), 
+            topView(),
+            todoList()
+          ],
         ),
         floatingActionButton: floatingActionBtn());
   }
